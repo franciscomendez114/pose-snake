@@ -243,14 +243,14 @@ class SnakeGame {
     }
 
     #loadImages(){
-        this.images[`food_img`] = this.p5Object.loadImage('/Snake/images/apple.png');
-        this.images[`snake_head`] = this.p5Object.loadImage(`/Snake/images/head.png`);
-        this.images[`snake_body`] = this.p5Object.loadImage(`/Snake/images/body.png`);
-        this.images[`snake_tail`] = this.p5Object.loadImage(`/Snake/images/tail.png`);
-        this.images[`snake_down-right`] = this.p5Object.loadImage(`/Snake/images/down-right.png`);
-        this.images[`snake_right-up`] = this.p5Object.loadImage(`/Snake/images/right-up.png`);
-        this.images[`snake_up-left`] = this.p5Object.loadImage(`/Snake/images/up-left.png`);
-        this.images[`snake_up-right`] = this.p5Object.loadImage(`/Snake/images/up-right.png`);
+        this.images[`food_img`] = this.p5Object.loadImage('./images/apple.png');
+        this.images[`snake_head`] = this.p5Object.loadImage(`./images/head.png`);
+        this.images[`snake_body`] = this.p5Object.loadImage(`./images/body.png`);
+        this.images[`snake_tail`] = this.p5Object.loadImage(`./images/tail.png`);
+        this.images[`snake_down-right`] = this.p5Object.loadImage(`./images/down-right.png`);
+        this.images[`snake_right-up`] = this.p5Object.loadImage(`./images/right-up.png`);
+        this.images[`snake_up-left`] = this.p5Object.loadImage(`./images/up-left.png`);
+        this.images[`snake_up-right`] = this.p5Object.loadImage(`./images/up-right.png`);
     }
 
     update(){
