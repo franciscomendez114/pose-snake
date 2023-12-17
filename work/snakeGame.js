@@ -171,7 +171,7 @@ class Snake {
     }
 
     update(){
-        if (this.p.frameCount % 10 == 0){
+        if (this.p.frameCount % 20 == 0){
             this.moveSnake();
         }
     }

@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;1,900&family=Poppins:wght@200&family=Press+Start+2P&family=Roboto:wght@100&family=Silkscreen&display=swap');
+
+* {
+    box-sizing: border-box;
+    overflow: hidden;
+    font-family: 'poppins';
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+
+}
+
+#mainContent{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+}
+
+#imageContainer{
+    width: 640px;
+    height: 480px;
+    box-shadow: 0px 0px 15px 5px rgba(209, 209, 209, 0.96);
+}
+
+#gameContainer{
+    width: 600px;
+    height: 600px;
+    box-shadow: 0px 0px 15px 5px rgba(209, 209, 209, 0.96);
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.collectDataBtn {
+    border: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
+    background-color: #1DA2DC;
+    color: white;
+    font-weight: bold;
+    margin: 15px 10px 15px 10px;
+    box-shadow: 0px 0px 10px 5px rgba(114, 114, 114, 0.22);
+    cursor: pointer;
+    transition: 0.25s all ease;
+}
+
+.collectDataBtn:hover {
+    color: #1DA2DC;
+    background-color: white;
+}
+
+.addDataBtn {
+    border: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
+    background-color: #1A578F;
+    color: white;
+    font-weight: bold;
+    margin: 15px 10px 15px 10px;
+    box-shadow: 0px 0px 10px 5px rgba(114, 114, 114, 0.257);
+    cursor: pointer;
+    transition: 0.25s all ease;
+}
+
+.addDataBtn:hover {
+    color: #1A578F;
+    background-color: white;
+}
+
+.continueBtn {
+    border: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
+    background-color: #1DA2DC;
+    color: white;
+    font-weight: bold;
+    margin: 15px 10px 15px 10px;
+    box-shadow: 0px 0px 10px 5px rgba(114, 114, 114, 0.257);
+    cursor: pointer;
+    transition: 0.25s all ease;
+}
+
+.continueBtn:hover {
+    color: #1DA2DC;
+    background-color: white;
+}
+
+.trainBtn {
+    border: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
+    background-color:  rgba(241, 105, 75, 0.928);
+    color: white;
+    font-weight: bold;
+    margin: 15px 10px 15px 10px;
+    box-shadow: 0px 0px 10px 5px rgba(114, 114, 114, 0.257);
+    cursor: pointer;
+    transition: 0.25s all ease;
+}
+
+.trainBtn:hover {
+    color: rgba(241, 105, 75, 0.928);
+    background-color: white;
+}
+
+.left {
+    width: 640px;
+}
+
+.progressBar {
+    margin-top: 10px;
+}
+
+.bar-text {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: -2px;
+    text-align: center;
+}
+
+.trainingBar {
+    width: 100%;
+    height: 20px;
+    border: .25px black solid;
+    margin-top: 15px;
+}
+
+
+.training-rect {
+    width: 0%;
+    height: 100%;
+    background-color: rgba(170, 170, 170, 0.816);
+    animation-name: animate;
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.resetBtn {
+    border: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
+    background-color: #91C13E;
+    color: white;
+    font-weight: bold;
+    margin: 15px 10px 15px 10px;
+    box-shadow: 0px 0px 10px 5px rgba(114, 114, 114, 0.339);
+    cursor: pointer;
+    transition: 0.25s all ease;
+}
+
+.resetBtn:hover {
+    background-color: white;
+    color: #91C13E;
+}
+
+.hide {
+    display: none;
+}
+
+.right {
+    width: 550px;
+    height: 550px;
+}
+
+.instructions {
+    font-size: 30px;
+    text-align: center;
+}
+
+.inst-img {
+    max-width:100%;
+    max-height:calc(100% - 90px);
+    min-width: 100%;
+    min-height: calc(100% - 90px);
+    object-fit: contain;
+}
+
+header {
+    width: 100%;
+    height: 6%;
+    color: white;
+    font-style: "times";
+    font-size: 40px;
+    text-align: center;
+    background-color: #2e669a;
+    font-family: 'Courier New', Courier, monospace;
+}
+.start-btn-container{
+    width: 100%;
+    height: calc(100% - 90px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.startButton{
+    width: 250px;
+    height: 125px;
+    font-size: 50px;
+    border: none;
+    border-radius: 20px;
+    background-color: rgb(236, 109, 109);
+    font-weight: bolder;
+    color: rgb(253, 253, 253);
+    box-shadow: 0px 0px 15px 10px rgba(128, 128, 128, 0.37);
+    cursor: pointer;
+    transition: all 0.5s;
+    
+}
+
+.startButton:hover {
+    opacity: 0.5;
+}
+
