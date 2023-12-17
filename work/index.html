@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/1.1.1/progressbar.min.js" integrity="sha512-8RAwsP5DBXxOKowV9rc4TwxbW0Z+YG856FOh4ymLgoAQlfhCmkYm8G46FaFAZYsG/J8jcAlI/22q0PSLHz4HAQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- Load ml5.js -->
+        
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.min.js"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/ml5@0.7.0/dist/ml5.min.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script> -->
+        
+        
+
+        <title>Personal Project: Video Games and AI!</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>Personal Project!</header>
+        <div id="mainContent">
+            <div class="left">
+                <div class="canvas" id="imageContainer"></div>
+                <div class="progressBar">
+                </div>
+                <div class="bar-text">
+                    Taking Images ( <span id="takenImages">0</span>/100 ) . . .
+                </div>
+                <div class="buttons">
+                    <button class="addDataBtn">Add Data</button>
+                    <button class="continueBtn hide">Move on to next step...</button>
+                    <button class="resetBtn hide">Reset</button>
+                    <button class="trainBtn hide">Train Model!</button>
+                </div>
+            </div>
+            <div class="right">
+                <div class="instructions">Strike a Pose to move the snake in the direction below!</div>
+                <div class="canvas hide" id="gameContainer"></div>
+                 
+                <img class="inst-img" src='./images/arrowDown.png'>
+                <div class="start-btn-container hide">
+                    <button class="startButton hide">Start</button>
+                </div>
+                
+                
+            </div>
+        </div>
+        <script src="snakeGame.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>
