@@ -263,5 +263,13 @@ class SnakeGame {
         this.food.show();
     }
 
+    restart() {
+        this.snake = new Snake(Math.floor(this.p5Object.random(19))*this.cellSize,
+                                Math.floor(this.p5Object.random(19))*this.cellSize,
+                                this.cellSize, this.p5Object);
+        this.food = new Food(5*this.cellSize, 6*this.cellSize,
+                            this.cellSize, this.p5Object);
+    }
+
 }
 

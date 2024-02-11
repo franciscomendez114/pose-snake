@@ -10,6 +10,7 @@ var continueBtn = document.querySelector('.continueBtn');
 var trainingBtn = document.querySelector('.trainBtn');
 var barText = document.querySelector('.bar-text');
 var startButton = document.querySelector('.startButton');
+var restartGameBtn = document.querySelector('.restartBtn');
 var images = {
     "down": './images/arrowDown.png',
     "left": './images/leftArrow.png',
@@ -165,7 +166,7 @@ const ImageCanvas = ( p ) => {
             data.forEach(x => {
                 model.addData(x.data, [x.label]);
             });
-
+            
             //train model
             const trainingOptions = {
                 epochs: 50,
@@ -256,7 +257,6 @@ const ImageCanvas = ( p ) => {
         });
     }
 
-
     p.cameraInit = function(){
         capture = p.createCapture(p.VIDEO);
         capture.hide();
@@ -304,6 +304,8 @@ const GameCanvas = ( p ) => {
         p.createCanvas(500, 500);
         game = new SnakeGame(p);
         gameActive = true;
+        restartGameBtn.classList.remove('hide');
+        restartGameBtn.addEventListener('click', () => game.restart());
     }
 
     p.draw = function(){
