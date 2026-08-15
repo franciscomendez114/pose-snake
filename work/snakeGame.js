@@ -287,11 +287,18 @@ class SnakeGame {
         this.images[`snake_up-right`] = this.p5Object.loadImage(`./images/up-right.png`);
     }
 
-    // the snake starts as 3 blocks laid out to the right of the head, so the head
-    // has to spawn far enough left that the whole body still fits on the board
+    // spawn in the middle of the board so there is always room to react. the snake
+    // starts as 3 blocks laid out to the right of the head and immediately moves
+    // left, so the head needs clear runway to its left, and the row is kept off
+    // the top and bottom edges so an early up/down pose is not an instant loss.
     #spawnSnake(){
-        const col = Math.floor(this.p5Object.random(this.cols - 2));
-        const row = Math.floor(this.p5Object.random(this.rows));
+        const minCol = Math.floor(this.cols/2);           // at least half the board of runway
+        const maxCol = this.cols - 3;                     // leaves room for the 3-block body
+        const minRow = Math.floor(this.rows/4);
+        const maxRow = this.rows - 1 - minRow;
+
+        const col = minCol + Math.floor(this.p5Object.random(maxCol - minCol + 1));
+        const row = minRow + Math.floor(this.p5Object.random(maxRow - minRow + 1));
         return new Snake(col*this.cellSize, row*this.cellSize, this.cellSize, this.p5Object);
     }
 
