@@ -99,9 +99,10 @@ const ImageCanvas = ( p ) => {
         });
         addDataBtn.addEventListener('click', () => {
             let int = null;
-            countDownActive = 5;
+            countDownActive = 3;
 
             int = setInterval(() => {
+                countDownActive--;
                 if (countDownActive === 0){
                     clearInterval(int);
                     countDownActive = null; // clears the countdown circle off the canvas
@@ -138,9 +139,6 @@ const ImageCanvas = ( p ) => {
                             continueBtn.classList.remove('hide'); 
                         };
                     }, 100);
-                }else {
-                    if (!countDownActive) countDownActive = 5;
-                    else countDownActive --;
                 }
             }, 1000)
 
