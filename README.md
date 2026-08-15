@@ -10,11 +10,7 @@ That means it learns whatever poses you feel like using.
 
 > Originally built as an IB MYP Personal Project (2023–24).
 
-![Demo](docs/demo.gif)
-
-<!-- Record ~15s: collecting one direction, the training step, then playing.
-     Save it as docs/demo.gif. This is the single most useful thing you can
-     add to this README. -->
+![Playing Snake by posing in front of the webcam](docs/gameplay.gif)
 
 ## How it works
 
@@ -42,11 +38,19 @@ webcam ──► PoseNet ──► 17 keypoints ──► normalize ──► 34
    and height so the features are resolution-independent, giving 34 values per
    frame. Keypoints the model isn't confident about (score ≤ 0.6) are zeroed
    rather than dropped, so every sample stays the same length.
-3. **Data collection.** For each of the four directions you get a 5-second
+3. **Data collection.** For each of the four directions you get a 3-second
    countdown, then the app records 100 labeled samples at 10 per second. A sample
    is only counted on frames where a body was actually detected.
+
+   ![Recording 100 samples for the "left" pose](docs/collect.gif)
+   *Recording the "left" pose — countdown, then 100 samples. Shown at 2× speed.*
+
 4. **Training.** An `ml5.neuralNetwork` classifier trains in-browser on the ~400
    samples — 50 epochs, batch size 5, learning rate 0.15.
+
+   ![Training loss dropping over 50 epochs](docs/training.gif)
+   *Loss falls from ~1.2 to near zero in around 15 epochs. Shown at 1.5× speed.*
+
 5. **Playing.** Every frame the current pose is classified and the winning label
    is used as the snake's direction.
 
