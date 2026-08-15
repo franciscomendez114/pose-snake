@@ -6,15 +6,25 @@ class Food {
 
     }
 
-    show(){
-        this.p.fill(255, 0, 0);
-        this.p.noStroke();
-        this.p.ellipse(this.pos.x + this.cellSize/2, this.pos.y + this.cellSize/2, this.cellSize-5);
+    show(images){
+        // p5 loads images asynchronously, so fall back to a plain circle until it arrives
+        if (images["food_img"] && images["food_img"].width > 0){
+            this.p.image(images["food_img"], this.pos.x, this.pos.y, this.cellSize, this.cellSize);
+        }else {
+            this.p.fill(255, 0, 0);
+            this.p.noStroke();
+            this.p.ellipse(this.pos.x + this.cellSize/2, this.pos.y + this.cellSize/2, this.cellSize-5);
+        }
     }
 
-    changeLocation(){
-        let randX = Math.floor(this.p.random(19))*this.cellSize;
-        let randY = Math.floor(this.p.random(19))*this.cellSize;
+    // pick a random free cell, never one the snake is currently sitting on
+    changeLocation(cols, rows, snakeBody){
+        let randX, randY, onSnake;
+        do {
+            randX = Math.floor(this.p.random(cols))*this.cellSize;
+            randY = Math.floor(this.p.random(rows))*this.cellSize;
+            onSnake = snakeBody.some(block => block.x === randX && block.y === randY);
+        } while (onSnake);
         this.pos = this.p.createVector(randX, randY);
     }
 
@@ -43,6 +53,13 @@ class Snake {
         };
 
         this.vel = this.directions["left"];
+
+        // turns are queued here and applied on the next step, so two quick
+        // turns in one step cannot fold the snake back into itself
+        this.nextVel = this.vel;
+
+        // set when the apple is eaten; tells moveSnake to keep its tail this step
+        this.grow = false;
     }
 
     show(images){
@@ -170,18 +187,28 @@ class Snake {
         }
     }
 
+    // the snake only steps once every 20 frames, which is what sets the game speed.
+    // returns true on the frames where it actually moved, so the game knows when
+    // it is worth re-checking collisions.
     update(){
         if (this.p.frameCount % 20 == 0){
             this.moveSnake();
+            return true;
         }
+        return false;
     }
 
     moveSnake(){
+        // apply whichever turn was queued since the last step
+        this.vel = this.nextVel;
+
         //copy body array
         const body_copy = [...this.body];
 
-        //remove last element
-        body_copy.pop();
+        // normally the tail is dropped so the snake stays the same length;
+        // after eating we keep it, which is what makes the snake grow by one
+        if (this.grow) this.grow = false;
+        else body_copy.pop();
 
         // add block to beginning going in dir of vel
         const pos = p5.Vector.add(this.vel, body_copy[0]);
@@ -192,38 +219,44 @@ class Snake {
 
     }
 
+    // a turn is only legal if it is perpendicular to the way we are already going.
+    // vel.y === 0 means we are moving horizontally, so up/down are allowed.
     goUp(){
-        if (this.vel != this.directions["down"]){
-            this.vel = this.directions["up"];
-        }
-        
+        if (this.vel.y === 0) this.nextVel = this.directions["up"];
     }
 
     goDown(){
-        if (this.vel != this.directions["up"]){
-            this.vel = this.directions["down"];
-        }
+        if (this.vel.y === 0) this.nextVel = this.directions["down"];
     }
 
     goRight(){
-        if (this.vel != this.directions["left"]){
-            this.vel = this.directions["right"];
-        }
-        
+        if (this.vel.x === 0) this.nextVel = this.directions["right"];
     }
 
     goLeft(){
-        if (this.vel != this.directions["right"]){
-            this.vel = this.directions["left"];
-        }
+        if (this.vel.x === 0) this.nextVel = this.directions["left"];
     }
 
+    // true when the head has landed on the apple this step
     ateFruit(fruit){
         if (fruit.pos.x == this.body[0].x && fruit.pos.y == this.body[0].y){
-            fruit.changeLocation();
-            this.body.push(p5.Vector.sub(this.body[this.body.length-1], this.vel));
-
+            this.grow = true;
+            return true;
         }
+        return false;
+    }
+
+    // first way to lose: the head leaves the board
+    hitWall(cols, rows){
+        const head = this.body[0];
+        return head.x < 0 || head.y < 0 ||
+               head.x >= cols*this.cellSize || head.y >= rows*this.cellSize;
+    }
+
+    // second way to lose: the head lands on one of its own segments
+    hitSelf(){
+        const head = this.body[0];
+        return this.body.slice(1).some(block => block.x === head.x && block.y === head.y);
     }
 
 
@@ -234,12 +267,13 @@ class SnakeGame {
         this.images = {};
         this.p5Object = p5Object;
         this.cellSize = 25;
-        this.snake = new Snake(Math.floor(this.p5Object.random(19))*this.cellSize,
-                                Math.floor(this.p5Object.random(19))*this.cellSize,
-                                this.cellSize, this.p5Object);
-        this.food = new Food(5*this.cellSize, 6*this.cellSize,
-                             this.cellSize, this.p5Object);
+
+        // the canvas is 500x500 and cells are 25px, so the board is 20x20
+        this.cols = 20;
+        this.rows = 20;
+
         this.#loadImages();
+        this.restart();
     }
 
     #loadImages(){
@@ -253,22 +287,70 @@ class SnakeGame {
         this.images[`snake_up-right`] = this.p5Object.loadImage(`./images/up-right.png`);
     }
 
+    // the snake starts as 3 blocks laid out to the right of the head, so the head
+    // has to spawn far enough left that the whole body still fits on the board
+    #spawnSnake(){
+        const col = Math.floor(this.p5Object.random(this.cols - 2));
+        const row = Math.floor(this.p5Object.random(this.rows));
+        return new Snake(col*this.cellSize, row*this.cellSize, this.cellSize, this.p5Object);
+    }
+
     update(){
-        this.snake.update();
-        this.snake.ateFruit(this.food);
+        if (this.gameOver) return;
+
+        // nothing can have changed on frames where the snake did not step
+        if (!this.snake.update()) return;
+
+        if (this.snake.hitWall(this.cols, this.rows) || this.snake.hitSelf()){
+            this.gameOver = true;
+            return;
+        }
+
+        if (this.snake.ateFruit(this.food)){
+            this.score++;
+            this.food.changeLocation(this.cols, this.rows, this.snake.body);
+        }
     }
 
     display(){
         this.snake.show(this.images);
-        this.food.show();
+        this.food.show(this.images);
+        this.#drawScore();
+        if (this.gameOver) this.#drawGameOver();
+    }
+
+    #drawScore(){
+        this.p5Object.push();
+        this.p5Object.fill(0);
+        this.p5Object.noStroke();
+        this.p5Object.textSize(20);
+        this.p5Object.textAlign(this.p5Object.LEFT, this.p5Object.TOP);
+        this.p5Object.text(`Score: ${this.score}`, 8, 8);
+        this.p5Object.pop();
+    }
+
+    #drawGameOver(){
+        const w = this.cols*this.cellSize;
+        const h = this.rows*this.cellSize;
+        this.p5Object.push();
+        this.p5Object.fill(0, 0, 0, 170);
+        this.p5Object.noStroke();
+        this.p5Object.rect(0, 0, w, h);
+        this.p5Object.fill(255);
+        this.p5Object.textAlign(this.p5Object.CENTER, this.p5Object.CENTER);
+        this.p5Object.textSize(44);
+        this.p5Object.text('Game Over', w/2, h/2 - 25);
+        this.p5Object.textSize(20);
+        this.p5Object.text(`Score: ${this.score} — press Restart`, w/2, h/2 + 25);
+        this.p5Object.pop();
     }
 
     restart() {
-        this.snake = new Snake(Math.floor(this.p5Object.random(19))*this.cellSize,
-                                Math.floor(this.p5Object.random(19))*this.cellSize,
-                                this.cellSize, this.p5Object);
-        this.food = new Food(5*this.cellSize, 6*this.cellSize,
-                            this.cellSize, this.p5Object);
+        this.snake = this.#spawnSnake();
+        this.food = new Food(0, 0, this.cellSize, this.p5Object);
+        this.food.changeLocation(this.cols, this.rows, this.snake.body);
+        this.score = 0;
+        this.gameOver = false;
     }
 
 }

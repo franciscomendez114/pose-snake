@@ -104,16 +104,21 @@ const ImageCanvas = ( p ) => {
             int = setInterval(() => {
                 if (countDownActive === 0){
                     clearInterval(int);
+                    countDownActive = null; // clears the countdown circle off the canvas
                     bar.animate(1);
                     let interval = null
                     interval = setInterval(()=>{
                         if (Number(takenImagesEle.innerHTML) < 100){
-                            takenImagesEle.innerHTML = Number(takenImagesEle.innerHTML) + 1; 
+                            // only count a sample on ticks where PoseNet actually saw
+                            // someone, otherwise the counter reaches 100 while far
+                            // fewer samples made it into the training set
                             if (poses.length > 0){
                                 const keypoints = poses[0].pose.keypoints;
                                 let tempData = [];
-                
+
                                 for (let keypoint of keypoints){
+                                    // low-confidence joints are zeroed out rather than
+                                    // dropped, so every sample has the same length
                                     if (keypoint.score > 0.6){
                                         tempData.push(keypoint.position.x/640);
                                         tempData.push(keypoint.position.y/480);
@@ -124,6 +129,7 @@ const ImageCanvas = ( p ) => {
                                     }
                                 }
                                 data.push({data:tempData, label: dataGatheringType});
+                                takenImagesEle.innerHTML = Number(takenImagesEle.innerHTML) + 1;
                             }
                         }else {
                             clearInterval(interval);
@@ -141,7 +147,10 @@ const ImageCanvas = ( p ) => {
         });
 
         resetDataBtn.addEventListener('click', () => {
-            data[dataGatheringType] = [];
+            // actually drop the samples for this direction. the old version assigned
+            // to data["up"] etc, which just set a property on the array and left
+            // every bad sample in the training set.
+            data = data.filter(sample => sample.label !== dataGatheringType);
             addDataBtn.classList.remove('hide');
             resetDataBtn.classList.add('hide');
             continueBtn.classList.add('hide');
@@ -194,7 +203,8 @@ const ImageCanvas = ( p ) => {
             gameContainer.classList.remove('hide');
             new p5(GameCanvas, 'gameContainer');
             instructionsText.classList.remove('hide');
-            instructionsText.innerHTML = `Prediction: ${prediction.label}`;
+            // the first classification may not have come back yet, so prediction can still be null
+            instructionsText.innerHTML = prediction ? `Prediction: ${prediction.label}` : 'Strike a pose...';
 
         })
 
@@ -297,20 +307,20 @@ const ImageCanvas = ( p ) => {
 
 const GameCanvas = ( p ) => {
     var game;
-    var gameActive;
-
 
     p.setup = function(){
         p.createCanvas(500, 500);
         game = new SnakeGame(p);
-        gameActive = true;
         restartGameBtn.classList.remove('hide');
         restartGameBtn.addEventListener('click', () => game.restart());
     }
 
     p.draw = function(){
-        if (gameActive){
-            p.background(87, 219, 83);
+        p.background(87, 219, 83);
+
+        // steer with whatever the classifier last predicted. prediction is null
+        // until the first result arrives, and steering stops once you have lost.
+        if (prediction && !game.gameOver){
             if (prediction.label === "up"){
                 game.snake.goUp();
             }else if (prediction.label === "down"){
@@ -320,13 +330,11 @@ const GameCanvas = ( p ) => {
             }else if (prediction.label === "left"){
                 game.snake.goLeft();
             }
-        }else {
-            p.background(221);
         }
-        game.display();
+
+        // update before display so the game-over overlay shows on the same frame it happens
         game.update();
-        
-        
+        game.display();
     }
 
    
