@@ -8,6 +8,9 @@ No pretrained gesture model is shipped with this project — **you** record the
 four poses, and the classifier is trained live in the browser on your own data.
 That means it learns whatever poses you feel like using.
 
+**[▶ Try it live](https://franciscomendez114.github.io/pose-snake/)** — needs a
+webcam and about two minutes to train.
+
 > Originally built as an IB MYP Personal Project (2023–24).
 
 ![Playing Snake by posing in front of the webcam](docs/gameplay.gif)
@@ -56,7 +59,7 @@ webcam ──► PoseNet ──► 17 keypoints ──► normalize ──► 34
 
 ## Running it
 
-It's a static site, so any web server will do. From the `work/` directory:
+It's a static site, so any web server will do. From the repository root:
 
 ```bash
 python3 -m http.server 8000
@@ -86,14 +89,16 @@ whole torso works better than moving one hand.
 ## Project layout
 
 ```
-work/
-├── index.html      markup, CDN script tags, and the step-by-step UI
-├── main.js         two p5 sketches: the camera/training panel and the game panel,
-│                   plus all the DOM wiring for the collect → train → play flow
-├── snakeGame.js    Food, Snake, and SnakeGame — game rules and sprite rendering
-├── style.css       layout and styling
-└── images/         apple and snake sprites (head, body, tail, and corner pieces)
+index.html      markup, CDN script tags, and the step-by-step UI
+main.js         two p5 sketches: the camera/training panel and the game panel,
+                plus all the DOM wiring for the collect → train → play flow
+snakeGame.js    Food, Snake, and SnakeGame — game rules and sprite rendering
+style.css       layout and styling
+images/         apple and snake sprites (head, body, tail, and corner pieces)
+docs/           the demo GIFs used in this README
 ```
+
+The site lives at the repository root so GitHub Pages can serve it directly.
 
 The snake is drawn from individual sprites rather than plain squares:
 `Snake.activateSpriteMechanics` picks the right image and rotation for each
